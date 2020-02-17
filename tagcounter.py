@@ -1,4 +1,4 @@
-import data.dbapi as db
+import dbapi as db
 
 """
 Main file for running the programm

@@ -19,7 +19,7 @@ def create_table(tab_name=None):
 
     cur.execute('SELECT name FROM sqlite_master WHERE type="table" AND name=?', (tab_name,))
     if len(cur.fetchone()) == 0:
-        cur.execute('CREATE TABLE ' + tab_name + '(site text, url text, date_of_check text, tag_info integer)')
+        cur.execute('CREATE TABLE ' + tab_name + '(site text, url text, date_of_check text, tag_info text)')
 
     conn.close()
 

@@ -8,7 +8,7 @@ DB table description
     - данные о тэгах
 """
 
-DB_PATH = 'data/db/tagcounter.db'
+DB_PATH = 'tagcounter.db'
 TABLE_NAME = 't_tagcounter'
 
 

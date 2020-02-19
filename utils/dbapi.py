@@ -15,11 +15,15 @@ TABLE_NAME = 't_tagcounter'
 #
 def create_table(tab_name=None):
     conn = sqlite3.connect(DB_PATH)
+
+    if not tab_name:
+        tab_name = TABLE_NAME
+
     cur = conn.cursor()
 
-    cur.execute('SELECT name FROM sqlite_master WHERE type="table" AND name=?', (tab_name,))
-    if len(cur.fetchone()) == 0:
-        cur.execute('CREATE TABLE ' + tab_name + '(site text, url text, date_of_check text, tag_info text)')
+    cur.execute('SELECT COUNT(1) FROM sqlite_master WHERE type="table" AND name=?', (tab_name,))
+    if cur.fetchone()[0] == 0:
+        cur.execute('CREATE TABLE ' + tab_name + '(site TEXT, url TEXT, date_of_check TEXT, tag_info TEXT)')
 
     conn.close()
 
@@ -27,6 +31,9 @@ def create_table(tab_name=None):
 #
 def drop_table(tab_name=None):
     conn = sqlite3.connect(DB_PATH)
+
+    if not tab_name:
+        tab_name = TABLE_NAME
 
     cur = conn.cursor()
     cur.execute('DROP TABLE ' + tab_name)
@@ -44,6 +51,7 @@ def add_record(new_row, tab_name=None):
     create_table(tab_name)
 
     cur = conn.cursor()
+
     cur.execute('INSERT INTO ' + tab_name + ' VALUES(?,?,?,?)', new_row)
 
     conn.commit()
@@ -60,24 +68,28 @@ def tables_list():
 
     conn.close()
 
-    return tabs_list
+    for tab in tabs_list:
+        print(tab[0])
 
 
 #
-def select_table(tab_name=None):
+def select_table(site_url=None, tab_name=None):
     conn = sqlite3.connect(DB_PATH)
 
     if not tab_name:
         tab_name = TABLE_NAME
 
     cur = conn.cursor()
-    cur.execute('SELECT * FROM ' + tab_name)
+    if site_url:
+        cur.execute('SELECT * FROM ' + tab_name + ' WHERE url=? ORDER BY date_of_check DESC', (site_url, ))
+    else:
+        cur.execute('SELECT * FROM ' + tab_name)
+
     rows_list = cur.fetchall()
 
     conn.close()
 
     return rows_list
-
 
 #
 def clear_table(tab_name=None):
@@ -91,5 +103,4 @@ def clear_table(tab_name=None):
     conn.commit()
 
     conn.close()
-
 

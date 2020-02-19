@@ -1,7 +1,6 @@
-import dbapi as db
-from logsite import log_site
-from synomyms import get_site_by_synonym
-
+import argparse
+from utils.siteprocessing import save_site_info, show_site_info
+from utils.guiapi import run_window
 
 """
 Main file for running the programm
@@ -9,21 +8,30 @@ Main file for running the programm
     tagcounter --<command> options  -> run console version
 """
 
-"""
-    work with DB
-"""
-#print(*db.tables_list())
-#my_db.drop_table("tagcounter")
-#db.add_record(('yandex', 'yandex.ru', '2020-02-17', {html: 10 ...}))
-#print(*db.select_table())
+parser = argparse.ArgumentParser(description='Process commands from CM (--get|--view)')
+parser.add_argument('--get')
+parser.add_argument('--view')
 
-"""
-    sites logging
-"""
-#log_site('news.tut.by')
+args = parser.parse_args()
+input_params = vars(args)
 
-"""
-    work with yaml list
-"""
-#print(get_site_by_synonym('ydx'))
+
+def print_info(dict):
+    print('   site: {}'.format(dict['site']))
+    print('   tags: {}'.format(dict['tags']))
+
+
+# check action
+if input_params.get('get'):  # receive tag info and save it in the DB
+    print('START...')
+    print_info(save_site_info(input_params['get']))
+    print('...THIS INFORMATION SUCCESSFULLY STORED IN DB!')
+
+elif input_params.get('view'):  # get tag info from DB and show
+    print('START...')
+    print_info(show_site_info(input_params['view']))
+    print('...FINISH GETTING INFO!')
+
+else:  # run gui version
+    run_window()
 

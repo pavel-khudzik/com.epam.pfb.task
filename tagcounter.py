@@ -1,12 +1,20 @@
+"""
+Tagcounter program as a part of Python for beginners program
+
+Run from console examples
+    tagcounter --get "yandex.ru"   # count tags and save this information into DB
+    tagcounter --view "yandex.ru"  # show information about this site form DB
+Run GUI version
+    tagcounter
+
+Instead of use full names of sites synonyms are allowed.
+List of synonyms and sites is stored in tagcounter.yaml
+"""
+
 import argparse
 from utils.siteprocessing import save_site_info, show_site_info
 from utils.guiapi import run_window
 
-"""
-Main file for running the programm
-    tagcounter                      -> run GUI versiom
-    tagcounter --<command> options  -> run console version
-"""
 
 parser = argparse.ArgumentParser(description='Process commands from CM (--get|--view)')
 parser.add_argument('--get')

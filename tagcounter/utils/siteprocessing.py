@@ -4,8 +4,11 @@ import yaml
 import logging
 import pickle
 from datetime import datetime
+from pathlib import Path
 
-import utils.dbapi as db
+import tagcounter.utils.dbapi as db
+
+MAIN_PATH = Path(__file__).parent.parent
 
 
 # Class for counting tags
@@ -25,7 +28,7 @@ def get_site_content(site_url):
     try:
         ret = requests.get(site_url).text
     except:
-        ret = ''
+        ret = site_url
 
     return ret
 
@@ -51,16 +54,15 @@ def get_tag_count(site_url):
 def get_site_by_synonym(synonym):
     synonyms_dct = {}
 
-    try:
-        synonyms_dct = yaml.safe_load(open('tagcounter.yaml'))
-    except FileNotFoundError:
-        with open('tagcounter.yaml', 'a') as yf:
-            pass
+    yaml_file = Path(MAIN_PATH, 'tagcounter.yaml')
 
-    if synonyms_dct:
-        return synonyms_dct.setdefault(synonym, synonym)
-    else:
-        return synonym
+    if yaml_file.exists():
+        synonyms_dct = yaml.safe_load(open(yaml_file))
+
+        if synonyms_dct:
+            return synonyms_dct.setdefault(synonym, synonym)
+
+    return synonym
 
 
 """
@@ -70,7 +72,7 @@ def get_site_by_synonym(synonym):
 
 
 def log_site(site_name):
-    logging.basicConfig(filename='tagcounter.log', level=logging.INFO, format='%(asctime)-20s %(message)s')
+    logging.basicConfig(filename=Path(MAIN_PATH, 'tagcounter.log'), level=logging.INFO, format='%(asctime)-20s %(message)s')
     logging.info(site_name)
 
 

@@ -1,4 +1,5 @@
 import sqlite3
+from pathlib import Path
 
 """
 DB table description
@@ -8,7 +9,7 @@ DB table description
     - данные о тэгах
 """
 
-DB_PATH = 'tagcounter.db'
+DB_PATH = Path(Path(__file__).parent.parent, 'tagcounter.db')
 TABLE_NAME = 't_tagcounter'
 
 
@@ -76,16 +77,20 @@ def tables_list():
 def select_table(site_url=None, tab_name=None):
     conn = sqlite3.connect(DB_PATH)
 
+
     if not tab_name:
         tab_name = TABLE_NAME
 
     cur = conn.cursor()
-    if site_url:
-        cur.execute('SELECT * FROM ' + tab_name + ' WHERE url=? ORDER BY date_of_check DESC', (site_url, ))
-    else:
-        cur.execute('SELECT * FROM ' + tab_name)
+    try:
+        if site_url:
+            cur.execute('SELECT * FROM ' + tab_name + ' WHERE url=? ORDER BY date_of_check DESC', (site_url, ))
+        else:
+            cur.execute('SELECT * FROM ' + tab_name)
 
-    rows_list = cur.fetchall()
+        rows_list = cur.fetchall()
+    except sqlite3.OperationalError:
+        rows_list = []
 
     conn.close()
 
